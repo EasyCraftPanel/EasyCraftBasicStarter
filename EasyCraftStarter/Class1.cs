@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace EasyCraftStarter
 {
@@ -53,16 +54,17 @@ namespace EasyCraftStarter
                 p.StartInfo.Arguments = argument;
                 p.ErrorDataReceived += (_, args) => Server.StatusInfo.OnConsoleOutput(args.Data, true);
                 p.OutputDataReceived += (_, args) => Server.StatusInfo.OnConsoleOutput(args.Data);
-                p.Exited += (sender, args) =>
-                {
-                    Server.StatusInfo.OnConsoleOutput("服务器进程结束");
-                    Server.StatusInfo.Status = 0;
-                };
                 Processes[Server.BaseInfo.Id] = p;
                 p.Start();
                 Server.StatusInfo.Status = 2;
                 p.BeginOutputReadLine();
                 p.BeginErrorReadLine();
+                Task.Run(async () =>
+                {
+                    await p.WaitForExitAsync();
+                    Server.StatusInfo.OnConsoleOutput("服务器进程结束");
+                    Server.StatusInfo.Status = 0;
+                });
                 return true;
             }
             catch (Exception e)

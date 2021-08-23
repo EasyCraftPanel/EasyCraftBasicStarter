@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace EasyCraftStarter
@@ -37,7 +38,8 @@ namespace EasyCraftStarter
             return false;
         }
 
-        public static bool ServerStart(dynamic Server, string program, string argument)
+        public static bool ServerStart(dynamic Server, string program, string argument, Encoding inputenc,
+            Encoding outputenc)
         {
             try
             {
@@ -46,6 +48,9 @@ namespace EasyCraftStarter
                 p.StartInfo.RedirectStandardError = true;
                 p.StartInfo.RedirectStandardInput = true;
                 p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.StandardInputEncoding = inputenc;
+                p.StartInfo.StandardOutputEncoding = outputenc;
+                p.StartInfo.StandardErrorEncoding = outputenc;
                 p.StartInfo.ErrorDialog = false;
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.CreateNoWindow = true;
